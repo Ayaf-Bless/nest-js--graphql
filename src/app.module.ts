@@ -1,10 +1,9 @@
 import { Module } from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
-import { RestaurentModule } from "./restaurent/restaurent.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
 import * as Joi from "joi";
-import { Restaurent } from "./restaurent/entities/restaurent.entity";
+import { UsersModule } from "./users/users.module";
 
 @Module({
   imports: [
@@ -33,9 +32,9 @@ import { Restaurent } from "./restaurent/entities/restaurent.entity";
       password: process.env.DB_PASSWORD,
       synchronize: process.env.NODE_ENV !== "prod",
       logging: process.env.NODE_ENV !== "prod",
-      entities: [Restaurent],
+      entities: [],
     }),
-    RestaurentModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],

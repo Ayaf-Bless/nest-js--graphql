@@ -1,18 +1,20 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { IsString, Min } from "class-validator";
+import { Field, InputType, ObjectType } from "@nestjs/graphql";
+import { IsBoolean, IsOptional, IsString, Length } from "class-validator";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
+@InputType({ isAbstract: true })
 @ObjectType()
 @Entity()
 export class Restaurent {
   @Column()
   @Field((_type) => String)
   @PrimaryGeneratedColumn("uuid")
+  @IsString()
   id: string;
 
   @Field((_type) => String)
   @IsString()
-  @Min(5)
+  @Length(5, 8)
   @Column()
   name: string;
 
@@ -20,4 +22,10 @@ export class Restaurent {
   @IsString()
   @Column()
   description?: string;
+
+  @Field((_type) => Boolean, { defaultValue: false })
+  @Column({ default: false })
+  @IsBoolean()
+  @IsOptional()
+  isAdmin: boolean;
 }

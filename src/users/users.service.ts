@@ -6,6 +6,8 @@ import { CreateUserInput, CreateUserOutput } from "./dtos/create-user.dto";
 import { LoginInput, LoginOutput } from "./dtos/login.dto";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "../jwt/jwt.service";
+import { UserProfileInput } from "./dtos/user-profile.dto";
+import { UserUpdateInput, UserUpdateOutput } from "./dtos/user-update.dto";
 
 @Injectable()
 export class UsersService {
@@ -81,5 +83,22 @@ export class UsersService {
         error,
       };
     }
+  }
+
+  async updateUser(
+    id: string,
+    { email, password }: UserUpdateInput,
+  ): Promise<UserUpdateOutput> {
+    const user = await this.findById(id);
+    if (email) {
+      user.email = email;
+    }
+    if (password) {
+      user.password = password;
+    }
+    await this.userRepo.save(user);
+    return {
+      ok: true,
+    };
   }
 }

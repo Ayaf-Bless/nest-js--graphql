@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, Entity } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity } from "typeorm";
 import {
   Field,
   InputType,
@@ -38,6 +38,7 @@ export class User extends CoreEntity {
   @IsEnum(UserRole)
   role: UserRole;
 
+  @BeforeUpdate()
   @BeforeInsert()
   async hashPassWord() {
     try {

@@ -1,27 +1,21 @@
+import { Field, ObjectType } from "@nestjs/graphql";
 import {
-  Column,
   CreateDateColumn,
-  Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { IsDate, IsString } from "class-validator";
-import { Field } from "@nestjs/graphql";
 
-@Entity()
+@ObjectType()
 export class CoreEntity {
   @PrimaryGeneratedColumn("uuid")
-  @Field((_type) => String)
-  @IsString()
+  @Field((type) => String)
   id: string;
 
   @CreateDateColumn()
-  @Field((_type) => Date)
-  @IsDate()
+  @Field((type) => Date)
   createdAt: Date;
 
   @UpdateDateColumn()
-  @Field((_type) => Date)
-  @IsDate()
+  @Field((type) => Date)
   updatedAt: Date;
 }

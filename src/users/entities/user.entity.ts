@@ -1,14 +1,16 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToOne } from "typeorm";
 import {
   Field,
   InputType,
   ObjectType,
   registerEnumType,
 } from "@nestjs/graphql";
-import { IsEmail, IsEnum, IsString, Length } from "class-validator";
+import { IsBoolean, IsEmail, IsEnum, IsString, Length } from "class-validator";
 import { CoreEntity } from "../../common/entities/core.entity";
 import * as bcrypt from "bcrypt";
 import { InternalServerErrorException } from "@nestjs/common";
+import { Verification } from "./verification.entity";
+import { JoinColumn } from "typeorm/browser";
 
 enum UserRole {
   Client = "Client",
@@ -27,6 +29,11 @@ export class User extends CoreEntity {
   @IsEmail()
   email: string;
 
+  @Column({ default: false })
+  @Field((_type) => Boolean)
+  @IsBoolean()
+  Verified: boolean;
+
   @Column({ select: false })
   @Field((_type) => String)
   @IsString()
@@ -37,6 +44,10 @@ export class User extends CoreEntity {
   @Field((_type) => UserRole)
   @IsEnum(UserRole)
   role: UserRole;
+
+  /*@Field((_type) => String, { nullable: true })
+  @OneToOne((type) => Verification)
+  verification?: Verification;*/
 
   @BeforeUpdate()
   @BeforeInsert()

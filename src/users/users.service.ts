@@ -8,18 +8,18 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "../jwt/jwt.service";
 import { UserProfileInput } from "./dtos/user-profile.dto";
 import { UserUpdateInput, UserUpdateOutput } from "./dtos/user-update.dto";
+import { Verification } from "./entities/verification.entity";
+import { VerifyEmailOut } from "./dtos/verify-email.dto";
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
+    @InjectRepository(Verification)
+    private readonly verificationRepo: Repository<Verification>,
     private readonly config: ConfigService,
     private readonly jwtService: JwtService,
   ) {}
-
-  getI() {
-    return true;
-  }
 
   async findById(id: string): Promise<User> {
     return this.userRepo.findOne(id);
@@ -31,16 +31,23 @@ export class UsersService {
     role,
   }: CreateUserInput): Promise<CreateUserOutput> {
     try {
-      const user = await this.userRepo.findOne({
+      const exists = await this.userRepo.findOne({
         email,
       });
-      if (user) {
+      if (exists) {
         return {
           ok: false,
           error: "User already exist",
         };
       }
-      await this.userRepo.save(this.userRepo.create({ password, role, email }));
+      const user = await this.userRepo.save(
+        this.userRepo.create({ password, role, email }),
+      );
+      await this.verificationRepo.save(
+        this.verificationRepo.create({
+          user,
+        }),
+      );
       return {
         ok: true,
       };
@@ -92,6 +99,8 @@ export class UsersService {
     const user = await this.findById(id);
     if (email) {
       user.email = email;
+      user.Verified = false;
+      await this.verificationRepo.save(this.verificationRepo.create({ user }));
     }
     if (password) {
       user.password = password;
@@ -100,5 +109,28 @@ export class UsersService {
     return {
       ok: true,
     };
+  }
+
+  async verifyEmail(code: string): Promise<VerifyEmailOut> {
+    try {
+      const verification = await this.verificationRepo.findOne(
+        { code },
+        { relations: ["user"] },
+      );
+      if (!verification) {
+        throw new Error();
+      }
+      verification.user.Verified = true;
+      await this.userRepo.save(verification.user);
+      await this.verificationRepo.delete(verification.id);
+      return {
+        ok: true,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: "failed to verified your email, please try again later",
+      };
+    }
   }
 }

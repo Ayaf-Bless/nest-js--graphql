@@ -10,6 +10,7 @@ import { UserProfileInput } from "./dtos/user-profile.dto";
 import { UserUpdateInput, UserUpdateOutput } from "./dtos/user-update.dto";
 import { Verification } from "./entities/verification.entity";
 import { VerifyEmailOut } from "./dtos/verify-email.dto";
+import { MailService } from "../mail/mail.service";
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,7 @@ export class UsersService {
     private readonly verificationRepo: Repository<Verification>,
     private readonly config: ConfigService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async findById(id: string): Promise<User> {
@@ -48,6 +50,7 @@ export class UsersService {
           user,
         }),
       );
+      await this.mailService.sendMail("From the saving", "Try me");
       return {
         ok: true,
       };

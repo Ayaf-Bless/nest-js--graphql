@@ -4,19 +4,20 @@ import { UsersService } from "./users.service";
 import { User } from "./entities/user.entity";
 import { CreateUserInput, CreateUserOutput } from "./dtos/create-user.dto";
 import { LoginInput, LoginOutput } from "./dtos/login.dto";
-import { AuthGuard } from "../auth/auth.guard";
 import { AuthUser } from "../auth/auth-user.decorator";
 import { UserProfileInput, UserProfileOutput } from "./dtos/user-profile.dto";
 import { UserUpdateInput, UserUpdateOutput } from "./dtos/user-update.dto";
 import { VerifyEmailInput, VerifyEmailOut } from "./dtos/verify-email.dto";
+import { Role } from "../auth/role.decorator";
 
 @Resolver((_of) => User)
 export class UsersResolver {
   constructor(
     @Inject(UsersService) private readonly usersService: UsersService,
   ) {}
+
   @Query((_returns) => User)
-  @UseGuards(AuthGuard)
+  @Role(["Any"])
   me(@AuthUser() authUser: User) {
     return authUser;
   }
@@ -33,7 +34,7 @@ export class UsersResolver {
     return this.usersService.login(loginInput);
   }
 
-  @UseGuards(AuthGuard)
+  @Role(["Any"])
   @Query((_returns) => UserProfileOutput)
   async getUser(
     @Args() userProfileInput: UserProfileInput,
@@ -53,8 +54,8 @@ export class UsersResolver {
     }
   }
 
-  @UseGuards(AuthGuard)
   @Mutation((_returns) => UserUpdateOutput)
+  @Role(["Any"])
   updateUser(
     @AuthUser() authUser: User,
     @Args("input") userUpdateInput: UserUpdateInput,

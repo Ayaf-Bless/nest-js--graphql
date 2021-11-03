@@ -6,7 +6,6 @@ import { CreateUserInput, CreateUserOutput } from "./dtos/create-user.dto";
 import { LoginInput, LoginOutput } from "./dtos/login.dto";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "../jwt/jwt.service";
-import { UserProfileInput } from "./dtos/user-profile.dto";
 import { UserUpdateInput, UserUpdateOutput } from "./dtos/user-update.dto";
 import { Verification } from "./entities/verification.entity";
 import { VerifyEmailOut } from "./dtos/verify-email.dto";

@@ -1,17 +1,14 @@
-import { ArgsType, Field, InputType, PartialType } from "@nestjs/graphql";
+import { Field, InputType, ObjectType, PartialType } from "@nestjs/graphql";
 import { CreateRestaurantInput } from "./create-restaurant.dto";
-import { Allow, IsString } from "class-validator";
+import { CoreOutput } from "../../common/dtos/output.dto";
+import { IsString } from "class-validator";
 
 @InputType()
-class UpdateRestaurentInput extends PartialType(CreateRestaurantInput) {}
-
-@ArgsType()
-export class UpdateRestaurantDto {
+export class UpdateRestaurantInput extends PartialType(CreateRestaurantInput) {
   @Field((_type) => String)
   @IsString()
   id: string;
-
-  @Field((_type) => UpdateRestaurentInput)
-  @Allow()
-  data: UpdateRestaurentInput;
 }
+
+@ObjectType()
+export class UpdateRestaurantOutput extends CoreOutput {}
